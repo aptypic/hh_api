@@ -13,26 +13,31 @@ def get_area_id(city):
     return response.json().get("items")[0].get("id")
 
 
-def find_job(city_id):
+def find_job(city_id, pl):
     vacancies_link = "https://api.hh.ru/vacancies/"
     params = {
-        "text": "программист",
+        "text": f"{pl}",
         "area": city_id,
         "period": 30,
         "per_page": 100
     }
     response = requests.get(vacancies_link, params)
     response.raise_for_status()
-    for i in response.json().get("items"):
-        print(i.get("name"))
-    print(response.json().get("found"))
+    return response.json().get("found")
+
+
+def compare_demand_pl(city_id, popular_pl, pl_statistic):
+    for pl in popular_pl:
+        pl_statistic[pl] = find_job(city_id, pl)
+    print(pl_statistic)
 
 
 def main():
+    popular_pl = ["Python", "Java", "Javascript", "Golang", "C++", "Rust", "php"]
+    pl_statistic = {}
     load_dotenv()
-    city = os.getenv("CITY")
-    city_id = get_area_id(city)
-    find_job(city_id)
+    city_id = get_area_id(os.getenv("CITY"))
+    compare_demand_pl(city_id, popular_pl, pl_statistic)
 
 
 if __name__ == "__main__":
