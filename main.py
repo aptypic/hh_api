@@ -46,7 +46,7 @@ def compare_demand_sj_pl(city_id, popular_pl):
                 "vacancies_found": info_results[2],
                 "vacancies_processed": info_results[1],
                 "average_salary": info_results[0]
-                    }})
+            }})
     return pl_statistic
 
 
@@ -129,7 +129,6 @@ def main():
     city_id_sj = get_area_id_sj(os.getenv("CITY"))
     create_table_job(compare_demand_sj_pl(city_id_sj, popular_pl), f"SuperJob {os.getenv('CITY')}")
     create_table_job(compare_demand_hh_pl(city_id_hh, popular_pl), f"HeadHunter {os.getenv('CITY')}")
-
 
 
 if __name__ == "__main__":
