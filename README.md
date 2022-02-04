@@ -6,3 +6,9 @@ Before launch must be installed:
  - requests==2.26.0
  - terminaltables==3.1.10
  
+## How to install
+Python3 should be already installed. Then use `pip` (or `pip3`, if there is a conflict with Python2) to install dependencies:
+```
+python3 -m pip install --upgrade pip
+pip install -r requirements.txt
+```
