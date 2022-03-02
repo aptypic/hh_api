@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from terminaltables import AsciiTable
 
 
-def get_area_id_hh(city):
+def get_area_hh_id(city):
     area_link = "https://api.hh.ru/suggests/areas/"
     params = {
         "text": city
@@ -14,7 +14,7 @@ def get_area_id_hh(city):
     return response.json().get("items")[0].get("id")
 
 
-def get_area_id_sj(city):
+def get_area_sj_id(city):
     area_link = "https://api.superjob.ru/2.0/towns/"
     params = {
         "keyword": city
@@ -24,10 +24,10 @@ def get_area_id_sj(city):
     return response.json().get("objects")[0].get("id")
 
 
-def compare_demand_hh_pl(city_id, popular_pl):
+def compare_hh_pl_demand(city_id, popular_pl):
     pl_statistic = {}
     for pl in popular_pl:
-        info_results = predict_rub_salary_hh(city_id, pl)
+        info_results = predict_hh_rub_salary(city_id, pl)
         pl_statistic.update({
             f"{pl}": {
                 "vacancies_found": info_results[2],
@@ -37,10 +37,10 @@ def compare_demand_hh_pl(city_id, popular_pl):
     return pl_statistic
 
 
-def compare_demand_sj_pl(city_id, popular_pl):
+def compare_sj_pl_demand(city_id, popular_pl):
     pl_statistic = {}
     for pl in popular_pl:
-        info_results = predict_rub_salary_sj(city_id, pl)
+        info_results = predict_sj_rub_salary(city_id, pl)
         pl_statistic.update({
             f"{pl}": {
                 "vacancies_found": info_results[2],
@@ -50,7 +50,7 @@ def compare_demand_sj_pl(city_id, popular_pl):
     return pl_statistic
 
 
-def predict_rub_salary_hh(city_id, pl):
+def predict_hh_rub_salary(city_id, pl):
     vacancies_page_number = 1
     vacancies_page = 0
     average_results = []
@@ -80,7 +80,7 @@ def predict_rub_salary_hh(city_id, pl):
     return round(sum(average_results) / len(average_results)), len(average_results), response.json().get("found")
 
 
-def predict_rub_salary_sj(city_id, pl):
+def predict_sj_rub_salary(city_id, pl):
     vacancies_page = 0
     average_results = []
     check_results = True
@@ -112,7 +112,7 @@ def predict_rub_salary_sj(city_id, pl):
     return round(sum(average_results) / len(average_results)), len(average_results), response.json().get("total")
 
 
-def create_table_job(table_values, vacancy_source):
+def create_job_table(table_values, vacancy_source):
     heading_row = [["Язык программирование", "Вакансий найдено", "Вакансий обработано", "Средняя зарплата"]]
     for key, value in table_values.items():
         iter_language = [key]
@@ -125,10 +125,10 @@ def create_table_job(table_values, vacancy_source):
 def main():
     popular_pl = ["Python", "Java", "Javascript", "Golang", "C++", "php"]
     load_dotenv()
-    city_id_hh = get_area_id_hh(os.getenv("CITY"))
-    city_id_sj = get_area_id_sj(os.getenv("CITY"))
-    create_table_job(compare_demand_sj_pl(city_id_sj, popular_pl), f"SuperJob {os.getenv('CITY')}")
-    create_table_job(compare_demand_hh_pl(city_id_hh, popular_pl), f"HeadHunter {os.getenv('CITY')}")
+    city_hh_id = get_area_hh_id(os.getenv("CITY"))
+    city_sj_id = get_area_sj_id(os.getenv("CITY"))
+    create_job_table(compare_sj_pl_demand(city_sj_id, popular_pl), f"SuperJob {os.getenv('CITY')}")
+    create_job_table(compare_hh_pl_demand(city_hh_id, popular_pl), f"HeadHunter {os.getenv('CITY')}")
 
 
 if __name__ == "__main__":
