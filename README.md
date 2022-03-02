@@ -15,7 +15,9 @@ pip install -r requirements.txt
 ## How to start
 For specify city should to create .env file in the same directory. SuperJob require token unlike Headhunter, so you need to register your app and get the token. Then to add all in .env file:
 ```
-CITY = "Москва"
-X-API-APP-ID = "token"
+CITY="Москва"
+X-API-APP-ID="token"
 ```
-![image](https://user-images.githubusercontent.com/56154540/152491097-fc5caa77-84cc-4a8d-af0e-07b78b26d700.png)
+After fill .env to should launch main.py
+
+<img width="699" alt="image" src="https://user-images.githubusercontent.com/56154540/156317437-4dd69c8c-ebda-4acc-9fed-e571ae3990d1.png">
