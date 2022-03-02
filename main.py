@@ -24,39 +24,39 @@ def get_area_sj_id(city):
     return response.json().get("objects")[0].get("id")
 
 
-def compare_hh_pl_demand(city_id, popular_pl):
-    pl_statistic = {}
-    for pl in popular_pl:
-        info_results = predict_hh_rub_salary(city_id, pl)
-        pl_statistic.update({
-            f"{pl}": {
-                "vacancies_found": info_results[2],
-                "vacancies_processed": info_results[1],
-                "average_salary": info_results[0]
+def totalize_hh_results(city_id, popular_program_languages):
+    program_languages_statistic = {}
+    for program_language in popular_program_languages:
+        average_salary = predict_hh_rub_salary(city_id, program_language)
+        program_languages_statistic.update({
+            f"{program_language}": {
+                "vacancies_found": average_salary[2],
+                "vacancies_processed": average_salary[1],
+                "average_salary": average_salary[0]
             }})
-    return pl_statistic
+    return program_languages_statistic
 
 
-def compare_sj_pl_demand(city_id, popular_pl):
-    pl_statistic = {}
-    for pl in popular_pl:
-        info_results = predict_sj_rub_salary(city_id, pl)
-        pl_statistic.update({
-            f"{pl}": {
-                "vacancies_found": info_results[2],
-                "vacancies_processed": info_results[1],
-                "average_salary": info_results[0]
+def totalize_sj_results(city_id, popular_program_languages):
+    program_languages_statistic = {}
+    for program_language in popular_program_languages:
+        average_salary = predict_sj_rub_salary(city_id, program_language)
+        program_languages_statistic.update({
+            f"{program_language}": {
+                "vacancies_found": average_salary[2],
+                "vacancies_processed": average_salary[1],
+                "average_salary": average_salary[0]
             }})
-    return pl_statistic
+    return program_languages_statistic
 
 
-def predict_hh_rub_salary(city_id, pl):
+def predict_hh_rub_salary(city_id, program_language):
     vacancies_page_number = 1
     vacancies_page = 0
     average_results = []
     vacancies_link = "https://api.hh.ru/vacancies/"
     params = {
-        "text": f"{pl}",
+        "text": f"{program_language}",
         "area": city_id,
         "period": 30,
         "per_page": 100,
@@ -80,7 +80,7 @@ def predict_hh_rub_salary(city_id, pl):
     return round(sum(average_results) / len(average_results)), len(average_results), response.json().get("found")
 
 
-def predict_sj_rub_salary(city_id, pl):
+def predict_sj_rub_salary(city_id, program_language):
     vacancies_page = 0
     average_results = []
     check_results = True
@@ -90,7 +90,7 @@ def predict_sj_rub_salary(city_id, pl):
     }
     while check_results:
         params = {
-            "keyword": pl,
+            "keyword": program_language,
             "town": city_id,
             "page": vacancies_page,
             "count": "20"
@@ -123,12 +123,12 @@ def create_job_table(table_values, vacancy_source):
 
 
 def main():
-    popular_pl = ["Python", "Java", "Javascript", "Golang", "C++", "php"]
+    popular_program_languages = ["Python", "Java", "Javascript", "Golang", "C++", "php"]
     load_dotenv()
     city_hh_id = get_area_hh_id(os.getenv("CITY"))
     city_sj_id = get_area_sj_id(os.getenv("CITY"))
-    create_job_table(compare_sj_pl_demand(city_sj_id, popular_pl), f"SuperJob {os.getenv('CITY')}")
-    create_job_table(compare_hh_pl_demand(city_hh_id, popular_pl), f"HeadHunter {os.getenv('CITY')}")
+    create_job_table(totalize_sj_results(city_sj_id, popular_program_languages), f"SuperJob {os.getenv('CITY')}")
+    create_job_table(totalize_hh_results(city_hh_id, popular_program_languages), f"HeadHunter {os.getenv('CITY')}")
 
 
 if __name__ == "__main__":
