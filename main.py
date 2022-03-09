@@ -68,12 +68,12 @@ def predict_hh_rub_salary(city_id, program_language):
         vacancies_page_number = response.json().get("pages")
         vacancies_page += 1
         for vacancy in (response.json().get("items")):
-            if vacancy.get("salary") is not None and vacancy.get("salary").get("currency") == "RUR":
+            if vacancy.get("salary") and vacancy.get("salary").get("currency") == "RUR":
                 min_salary = vacancy.get("salary").get("from")
                 max_salary = vacancy.get("salary").get("to")
-                if min_salary is not None and max_salary is not None:
+                if min_salary and max_salary:
                     average_results.append(round((min_salary + max_salary) / 2))
-                elif min_salary is not None:
+                elif min_salary:
                     average_results.append(round(min_salary * 1.2))
                 else:
                     average_results.append(round(max_salary * 0.8))
@@ -102,10 +102,10 @@ def predict_sj_rub_salary(city_id, program_language):
         for vacancy in response.json().get("objects"):
             min_salary = vacancy.get("payment_from")
             max_salary = vacancy.get("payment_to")
-            if vacancy.get("currency") == "rub" and min_salary != 0 or max_salary != 0:
-                if min_salary != 0 and max_salary != 0:
+            if vacancy.get("currency") == "rub" and min_salary or max_salary:
+                if min_salary and max_salary:
                     average_results.append(round((min_salary + max_salary) / 2))
-                elif min_salary != 0:
+                elif min_salary:
                     average_results.append(round(min_salary * 1.2))
                 else:
                     average_results.append(round(max_salary * 0.8))
