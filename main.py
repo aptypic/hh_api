@@ -65,9 +65,10 @@ def predict_hh_rub_salary(city_id, program_language):
     while vacancies_page < vacancies_page_number:
         response = requests.get(vacancies_link, params)
         response.raise_for_status()
-        vacancies_page_number = response.json().get("pages")
+        headhunter_result = response.json()
+        vacancies_page_number = headhunter_result.get("pages")
         vacancies_page += 1
-        for vacancy in (response.json().get("items")):
+        for vacancy in (headhunter_result.get("items")):
             if vacancy.get("salary") and vacancy.get("salary").get("currency") == "RUR":
                 min_salary = vacancy.get("salary").get("from")
                 max_salary = vacancy.get("salary").get("to")
@@ -77,7 +78,7 @@ def predict_hh_rub_salary(city_id, program_language):
                     average_results.append(round(min_salary * 1.2))
                 else:
                     average_results.append(round(max_salary * 0.8))
-    return round(sum(average_results) / len(average_results)), len(average_results), response.json().get("found")
+    return round(sum(average_results) / len(average_results)), len(average_results), headhunter_result.get("found")
 
 
 def predict_sj_rub_salary(city_id, program_language):
@@ -97,9 +98,10 @@ def predict_sj_rub_salary(city_id, program_language):
         }
         response = requests.get(vacancies_link, params, headers=headers)
         response.raise_for_status()
-        check_results = response.json().get("more")
+        superjob_result = response.json()
+        check_results = superjob_result.get("more")
         vacancies_page += 1
-        for vacancy in response.json().get("objects"):
+        for vacancy in superjob_result.get("objects"):
             min_salary = vacancy.get("payment_from")
             max_salary = vacancy.get("payment_to")
             if vacancy.get("currency") == "rub" and min_salary or max_salary:
@@ -109,7 +111,7 @@ def predict_sj_rub_salary(city_id, program_language):
                     average_results.append(round(min_salary * 1.2))
                 else:
                     average_results.append(round(max_salary * 0.8))
-    return round(sum(average_results) / len(average_results)), len(average_results), response.json().get("total")
+    return round(sum(average_results) / len(average_results)), len(average_results), superjob_result.get("total")
 
 
 def create_job_table(table_values, vacancy_source):
