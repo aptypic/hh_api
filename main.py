@@ -78,7 +78,10 @@ def predict_hh_rub_salary(city_id, program_language):
                     average_results.append(round(min_salary * 1.2))
                 else:
                     average_results.append(round(max_salary * 0.8))
-    return round(sum(average_results) / len(average_results)), len(average_results), headhunter_result.get("found")
+    if len(average_results):
+        return round(sum(average_results) / len(average_results)), len(average_results), headhunter_result.get("found")
+    else:
+        return 0, 0, 0
 
 
 def predict_sj_rub_salary(city_id, program_language):
@@ -111,7 +114,10 @@ def predict_sj_rub_salary(city_id, program_language):
                     average_results.append(round(min_salary * 1.2))
                 else:
                     average_results.append(round(max_salary * 0.8))
-    return round(sum(average_results) / len(average_results)), len(average_results), superjob_result.get("total")
+    if len(average_results):
+        return round(sum(average_results) / len(average_results)), len(average_results), superjob_result.get("total")
+    else:
+        return 0, 0, 0
 
 
 def create_job_table(table_values, vacancy_source):
@@ -121,16 +127,17 @@ def create_job_table(table_values, vacancy_source):
         iter_language.extend(value.values())
         heading_row.append(iter_language)
     table_date = AsciiTable(heading_row, vacancy_source)
-    print(table_date.table)
+    return table_date.table
 
 
 def main():
-    popular_program_languages = ["Python", "Java", "Javascript", "Golang", "C++", "php"]
+    popular_program_languages = ["kobol", "Python", "Java", "Javascript", "Golang", "C++", "php"]
     load_dotenv()
     city_hh_id = get_area_hh_id(os.getenv("CITY"))
     city_sj_id = get_area_sj_id(os.getenv("CITY"))
-    create_job_table(totalize_sj_results(city_sj_id, popular_program_languages), f"SuperJob {os.getenv('CITY')}")
-    create_job_table(totalize_hh_results(city_hh_id, popular_program_languages), f"HeadHunter {os.getenv('CITY')}")
+    print(create_job_table(totalize_sj_results(city_sj_id, popular_program_languages), f"SuperJob {os.getenv('CITY')}"))
+    print(create_job_table(totalize_hh_results(city_hh_id,
+                                               popular_program_languages), f"HeadHunter {os.getenv('CITY')}"))
 
 
 if __name__ == "__main__":
