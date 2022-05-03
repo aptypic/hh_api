@@ -71,16 +71,20 @@ def predict_hh_rub_salary(city_id, program_language):
                     vacancy.get("salary").get("currency") == "RUR":
                 min_salary = vacancy.get("salary").get("from")
                 max_salary = vacancy.get("salary").get("to")
-                if min_salary and max_salary:
-                    average_results.append(round((min_salary +
-                                                  max_salary) / 2))
-                elif min_salary:
-                    average_results.append(round(min_salary * 1.2))
-                else:
-                    average_results.append(round(max_salary * 0.8))
+                predict_salary(min_salary, max_salary, average_results)
     if len(average_results):
         return round(sum(average_results) / len(average_results)), \
                len(average_results), headhunter_result.get("found")
+
+
+def predict_salary(min_salary, max_salary, average_results):
+    if min_salary and max_salary:
+        average_results.append(round((min_salary +
+                                      max_salary) / 2))
+    elif min_salary:
+        average_results.append(round(min_salary * 1.2))
+    else:
+        average_results.append(round(max_salary * 0.8))
 
 
 def predict_sj_rub_salary(city_id, program_language):
@@ -107,13 +111,7 @@ def predict_sj_rub_salary(city_id, program_language):
             min_salary = vacancy.get("payment_from")
             max_salary = vacancy.get("payment_to")
             if vacancy.get("currency") == "rub" and min_salary or max_salary:
-                if min_salary and max_salary:
-                    average_results.append(round((min_salary +
-                                                  max_salary) / 2))
-                elif min_salary:
-                    average_results.append(round(min_salary * 1.2))
-                else:
-                    average_results.append(round(max_salary * 0.8))
+                predict_salary(min_salary, max_salary, average_results)
     if len(average_results):
         return round(sum(average_results) / len(average_results)), \
                len(average_results), superjob_result.get("total")
